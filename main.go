@@ -11,6 +11,7 @@ import (
 	"syscall"
 
 	"github.com/net-byte/vtun/grpc"
+	"github.com/net-byte/vtun/kcp"
 
 	"github.com/net-byte/vtun/common/cipher"
 	"github.com/net-byte/vtun/common/config"
@@ -33,7 +34,7 @@ func main() {
 	flag.StringVar(&config.IntranetServerIPv6, "sip6", "fced:9999::1", "intranet server ipv6")
 	flag.StringVar(&config.DNSServerIP, "dip", "8.8.8.8", "dns server ip")
 	flag.StringVar(&config.Key, "k", "freedom@2022", "key")
-	flag.StringVar(&config.Protocol, "p", "udp", "protocol udp/tls/grpc/ws/wss")
+	flag.StringVar(&config.Protocol, "p", "udp", "protocol udp/kcp/tls/grpc/ws/wss")
 	flag.StringVar(&config.WebSocketPath, "path", "/freedom", "websocket path")
 	flag.BoolVar(&config.ServerMode, "S", false, "server mode")
 	flag.BoolVar(&config.GlobalMode, "g", false, "client global mode")
@@ -79,6 +80,12 @@ func startApp(config config.Config) {
 		} else {
 			udp.StartClient(config)
 		}
+	case "kcp":
+		if config.ServerMode {
+			kcp.StartServer(config)
+		} else {
+			kcp.StartClient(config)
+		}
 	case "ws", "wss":
 		if config.ServerMode {
 			ws.StartServer(config)
@@ -108,5 +115,5 @@ func startApp(config config.Config) {
 
 func stopApp(config config.Config) {
 	tun.Reset(config)
-	log.Printf("stopped!!!")
+	log.Printf("vtun stopped")
 }

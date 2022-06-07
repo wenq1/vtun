@@ -15,6 +15,7 @@ A simple VPN written in golang.
 * VPN over websocket
 * VPN over tls
 * VPN over grpc
+* VPN over kcp
 
 # Usage
 
@@ -45,7 +46,7 @@ Usage of ./vtun:
   -obfs
         enable data obfuscation
   -p string
-        protocol udp/tls/grpc/ws/wss (default "udp")
+        protocol udp/kcp/tls/grpc/ws/wss (default "udp")
   -path string
         websocket path (default "/freedom")
   -s string
@@ -101,6 +102,11 @@ sudo ./vtun-linux-amd64 -S -l :3001 -c 172.16.0.1/24 -k 123456
   vi /etc/sysctl.conf
   net.ipv4.ip_forward = 1
   net.ipv6.conf.all.forwarding=1
+  net.core.rmem_max=26214400
+  net.core.rmem_default=26214400
+  net.core.wmem_max=26214400
+  net.core.wmem_default=26214400
+  net.core.netdev_max_backlog=2048
   sysctl -p /etc/sysctl.conf
   # Masquerade outgoing traffic
   iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
